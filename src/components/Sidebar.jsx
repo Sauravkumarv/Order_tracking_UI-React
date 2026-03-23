@@ -19,7 +19,7 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => (
       <div
         className={[
           "absolute inset-0 bg-black/30 transition-opacity",
-          isMobileOpen ? "opacity-100" : "opacity-0"
+          isMobileOpen ? "opacity-50" : "opacity-0"
         ].join(" ")}
         onClick={onClose}
       />
@@ -37,7 +37,7 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => (
 
 const SidebarContent = ({ onClose }) => (
   <div className="flex h-full flex-col">
-    <div className="flex items-center justify-between px-6 pb-6 pt-8">
+    <div className="relative flex items-center justify-between px-6 pb-6 pt-8">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-xl font-bold text-white shadow-lg">
           AI
@@ -50,7 +50,7 @@ const SidebarContent = ({ onClose }) => (
       {onClose && (
         <button
           onClick={onClose}
-          className="md:hidden rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 transition hover:border-indigo-500"
+          className="md:hidden absolute right-4 top-3 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 opacity-70 transition hover:opacity-100 hover:border-indigo-500"
         >
           Close
         </button>
