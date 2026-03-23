@@ -1,10 +1,10 @@
 const OrderCard = ({ id, customer, items, eta }) => (
-  <div className="rounded-lg border border-neutral-700 bg-neutral-900/80 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-neutral-500 hover:shadow-md">
-    <p className="text-sm font-semibold text-white">{id}</p>
-    <p className="mt-1 text-xs text-neutral-300">{items}</p>
-    <div className="mt-3 flex items-center justify-between text-xs text-neutral-400">
+  <div className="rounded-lg border border-slate-200 bg-white w-full p-3 sm:p-4 lg:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-[0_14px_40px_rgba(79,70,229,0.15)]">
+    <p className="text-sm sm:text-base font-semibold text-slate-900">{id}</p>
+    <p className="mt-1 text-xs sm:text-sm text-slate-600">{items}</p>
+    <div className="mt-3 flex items-center justify-between text-xs sm:text-sm text-slate-500">
       <span>{customer}</span>
-      <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[11px] text-neutral-200">{eta}</span>
+      <span className="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">{eta}</span>
     </div>
   </div>
 )
