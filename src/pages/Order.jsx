@@ -14,7 +14,7 @@ const Order = () => {
         </button> */}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 lg:p-6 shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
+      <div className="w-full bg-white p-0 sm:rounded-2xl sm:border sm:border-slate-200 sm:p-5 lg:p-6 sm:shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {columns.map((column) => {
             const orders = column.orders ?? []
