@@ -1,15 +1,22 @@
 import { useState } from "react"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
 import Sidebar from "./Sidebar"
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  const isDiscountPage = pathname === "/discount-wheel"
 
   return (
     <div className="flex min-h-screen bg-white text-slate-900 overflow-x-hidden">
       <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="flex-1 md:ml-64 bg-gradient-to-br from-white via-slate-50 to-white">
+      <main
+        className={`flex-1 md:ml-64 ${
+          isDiscountPage ? "bg-white" : "bg-gradient-to-br from-white via-slate-50 to-white"
+        }`}
+      >
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           <div className="mb-4 flex items-center justify-between md:hidden">
             <button

@@ -2,11 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-white: #ffffff;
+}
 
-body{
+body {
   margin: 0;
   padding: 0;
-  background: #ffffff;
+  background: var(--color-white);
   color: #0f172a;
 }
 

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom"
 import Layout from "./components/Layout"
 import Dashboard from "./pages/Dashboard"
 import Order from "./pages/Order"
+import DiscountWheel from "./pages/DiscountWheel"
 import Settings from "./pages/Settings"
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/orders" element={<Order />} />
+        <Route path="/discount-wheel" element={<DiscountWheel />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
     </Routes>
