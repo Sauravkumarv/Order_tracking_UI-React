@@ -118,24 +118,24 @@ const DiscountWheel = () => {
   }, [segments, wheelRotationDeg, isSpinning]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10 bg-[var(--color-white,#ffffff)]">
+    <div className="min-h-screen flex flex-col mt-0 mb-10 items-center justify-center px-3 py-8 md:px-4 md:py-10 bg-[var(--color-white,#ffffff)]">
       <div className="text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 drop-shadow-sm">Lucky Spin Wheel</h1>
-        <p className="text-base md:text-lg text-slate-600 mt-1">Spin to win amazing discounts</p>
+        <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 drop-shadow-sm">Lucky Spin Wheel</h1>
+        <p className="text-sm md:text-lg text-slate-600 mt-1">Spin to win amazing discounts</p>
       </div>
 
       <div className="w-full max-w-xl">
-        <div className="relative mx-auto rounded-3xl bg-white/90 backdrop-blur-md border border-white/70 shadow-[0_25px_60px_rgba(0,0,0,0.12)] px-6 py-8">
+        <div className="relative mx-auto rounded-3xl bg-white/90 backdrop-blur-md border border-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.12)] px-4 py-6 md:px-6 md:py-8">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-white pointer-events-none"></div>
 
           <div className="relative flex flex-col items-center">
-            <div className="relative w-80 h-80 md:w-96 md:h-96">
-              <div className="absolute inset-0 rounded-full bg-amber-200/50 blur-3xl opacity-70"></div>
+            <div className="relative w-64 h-64 md:w-80 md:h-80">
+              <div className="absolute inset-0 rounded-full bg-amber-200/50 blur-3xl opacity-60"></div>
 
               <PointerIcon color={pointerColor} />
 
               <div
-                className="w-full h-full rounded-full shadow-2xl border-[6px] border-gray-900 relative overflow-hidden bg-slate-900"
+                className="w-full h-full rounded-full shadow-2xl border-[5px] md:border-[6px] border-gray-900 relative overflow-hidden bg-slate-900"
                 style={wheelStyle}
               >
                 <div className="absolute inset-2 rounded-full bg-black opacity-10"></div>
@@ -143,7 +143,7 @@ const DiscountWheel = () => {
                 {segments.map((seg, i) => (
                   <div
                     key={i}
-                    className="absolute inset-4 flex items-center justify-center text-white font-semibold text-sm md:text-base drop-shadow-lg"
+                    className="absolute inset-3 md:inset-4 flex items-center justify-center text-white font-semibold text-xs md:text-base drop-shadow-lg"
                     style={{
                       transform: `rotate(${i * 45 + 22.5}deg) translateY(-38%)`,
                       transformOrigin: 'center',
@@ -167,7 +167,7 @@ const DiscountWheel = () => {
         </div>
 
         {selectedSlice && (
-  <div className="mt-8 flex justify-center">
+          <div className="mt-6 md:mt-8 flex justify-center">
     <div style={{
       background: 'linear-gradient(135deg, #FF6A00 0%, #FFD700 40%, #FF0080 100%)',
       borderRadius: '20px',
