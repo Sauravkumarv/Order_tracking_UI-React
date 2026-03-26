@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import Confetti from 'react-confetti';
 import { discountWheelConfig } from '../config/discountWheel.config';
 
@@ -69,13 +69,59 @@ const SpinButton = ({ onClick, disabled, label }) => (
   </button>
 );
 
-const DiscountWheel = () => {
-  const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [selectedSlice, setSelectedSlice] = useState(null);
-  const [couponCode, setCouponCode] = useState('');
-  const { segments, spinButtonText, pointerColor } = discountWheelConfig;
+const WHEEL_SIZE_STYLE = {
+  width: 'clamp(240px, 76vw, 360px)',
+  height: 'clamp(240px, 76vw, 360px)',
+};
 
+const RESULT_CARD_BG_STYLE = {
+  background: 'linear-gradient(135deg, #1a0533 0%, #0d0d2b 100%)',
+};
+
+const RESULT_TITLE_STYLE = {
+  background: 'linear-gradient(90deg, #FFD700, #FF6A00, #FFD700)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
+const RESULT_VALUE_STYLE = {
+  background: 'linear-gradient(90deg, #FFD700 0%, #fff 50%, #FFD700 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+};
+
+const ResultCard = ({ selectedSlice, couponCode }) => (
+  <div className="w-full max-w-sm rounded-[18px] overflow-hidden">
+    <div className="rounded-[18px] px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 text-center" style={RESULT_CARD_BG_STYLE}>
+      <div
+        className="text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase mb-1"
+        style={RESULT_TITLE_STYLE}
+      >
+        🏆 Congratulations!
+      </div>
+      <div
+        className="text-xl sm:text-2xl md:text-[26px] font-bold leading-snug"
+        style={RESULT_VALUE_STYLE}
+      >
+        You won {selectedSlice.label} 🎉
+      </div>
+      {couponCode && (
+        <div className="mt-2 text-[11px] sm:text-xs tracking-[0.22em] text-[#FFD700aa] font-mono">
+          Code: {couponCode}
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const Wheel = ({
+  segments,
+  pointerColor,
+  spinButtonText,
+  wheelRotationDeg,
+  isSpinning,
+  onSpin,
+}) => {
   const segmentGradient = useMemo(
     () =>
       segments
@@ -87,12 +133,75 @@ const DiscountWheel = () => {
     [segments],
   );
 
-  const wheelStyle = {
-    background: `conic-gradient(${segmentGradient})`,
-    transform: `rotate(${wheelRotationDeg}deg)`,
-    transition: isSpinning ? 'transform 2.6s cubic-bezier(0.23, 0.78, 0.32, 1)' : 'none',
-    willChange: 'transform',
-  };
+  const wheelStyle = useMemo(
+    () => ({
+      background: `conic-gradient(${segmentGradient})`,
+      transform: `rotate(${wheelRotationDeg}deg)`,
+      transition: isSpinning
+        ? 'transform 2.6s cubic-bezier(0.23, 0.78, 0.32, 1)'
+        : 'none',
+      willChange: 'transform',
+    }),
+    [segmentGradient, wheelRotationDeg, isSpinning],
+  );
+
+  return (
+    <div className="relative" style={WHEEL_SIZE_STYLE}>
+      <div className="absolute inset-0 rounded-full bg-amber-200/50 blur-3xl opacity-60" />
+
+      <PointerIcon color={pointerColor} />
+
+      <div
+        className="w-full h-full rounded-full shadow-2xl border-[5px] md:border-[6px] border-gray-900 relative overflow-hidden bg-slate-900"
+        style={wheelStyle}
+      >
+        <div className="absolute inset-2 rounded-full bg-black opacity-10" />
+
+        {segments.map((seg, i) => {
+          const halfSlice = SLICE_DEGREES / 2;
+          const labelAngle = i * SLICE_DEGREES + halfSlice;
+          const innerAngle = -labelAngle;
+
+          return (
+            <div
+              key={i}
+              className="absolute inset-2 sm:inset-3 md:inset-4 flex items-center justify-center text-white font-semibold text-[10px] sm:text-xs md:text-base drop-shadow-lg"
+              style={{
+                transform: `rotate(${labelAngle}deg) translateY(-38%)`,
+                transformOrigin: 'center',
+              }}
+            >
+              <span
+                className="px-2 py-1 rounded-full bg-black/35 max-w-[82%] truncate"
+                style={{ transform: `rotate(${innerAngle}deg)` }}
+              >
+                {seg.label}
+              </span>
+            </div>
+          );
+        })}
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <SpinButton onClick={onSpin} disabled={isSpinning} label={spinButtonText} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DiscountWheel = () => {
+  const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [selectedSlice, setSelectedSlice] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const { segments, spinButtonText, pointerColor } = discountWheelConfig;
+
+  const spinTimeoutRef = useRef(null);
+  useEffect(() => {
+    return () => {
+      if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+    };
+  }, []);
 
   const spinWheel = useCallback(() => {
     if (isSpinning) return;
@@ -104,23 +213,25 @@ const DiscountWheel = () => {
     const targetSliceIndex =
       eligibleSliceIndexes[Math.floor(Math.random() * eligibleSliceIndexes.length)];
 
-    const deltaRotationDeg = computeSpinDelta({
-      currentRotationDeg: wheelRotationDeg,
-      sliceIndex: targetSliceIndex,
+    const landedSlice = segments[targetSliceIndex];
+    const code = `LUCKY${landedSlice.value}${Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0')}`;
+
+    setWheelRotationDeg(prev => {
+      const deltaRotationDeg = computeSpinDelta({
+        currentRotationDeg: prev,
+        sliceIndex: targetSliceIndex,
+      });
+      return prev + deltaRotationDeg;
     });
 
-    setWheelRotationDeg(prev => prev + deltaRotationDeg);
-
-    setTimeout(() => {
+    spinTimeoutRef.current = setTimeout(() => {
       setIsSpinning(false);
-      const landedSlice = segments[targetSliceIndex];
       setSelectedSlice(landedSlice);
-      const code = `LUCKY${landedSlice.value}${Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, '0')}`;
       setCouponCode(code);
     }, 3000);
-  }, [segments, wheelRotationDeg, isSpinning]);
+  }, [segments, isSpinning]);
 
   return (
     <div className="min-h-screen flex flex-col mt-0 mb-10 items-center justify-start px-3 py-8 md:px-4 md:py-10 bg-[var(--color-white,#ffffff)]">
@@ -134,88 +245,21 @@ const DiscountWheel = () => {
           <div className="absolute inset-0 rounded-3xl bg-white/45 pointer-events-none"></div>
 
           <div className="relative flex flex-col items-center">
-            <div
-              className="relative"
-              style={{
-                width: 'clamp(240px, 76vw, 360px)',
-                height: 'clamp(240px, 76vw, 360px)',
-              }}
-            >
-              <div className="absolute inset-0 rounded-full bg-amber-200/50 blur-3xl opacity-60"></div>
-
-              <PointerIcon color={pointerColor} />
-
-              <div
-                className="w-full h-full rounded-full shadow-2xl border-[5px] md:border-[6px] border-gray-900 relative overflow-hidden bg-slate-900"
-                style={wheelStyle}
-              >
-                <div className="absolute inset-2 rounded-full bg-black opacity-10"></div>
-
-                {segments.map((seg, i) => (
-                  <div
-                    key={i}
-                    className="absolute inset-2 sm:inset-3 md:inset-4 flex items-center justify-center text-white font-semibold text-[10px] sm:text-xs md:text-base drop-shadow-lg"
-                    style={{
-                      transform: `rotate(${i * 45 + 22.5}deg) translateY(-38%)`,
-                      transformOrigin: 'center',
-                    }}
-                  >
-                    <span
-                      className="px-2 py-1 rounded-full bg-black/35 max-w-[82%] truncate"
-                      style={{ transform: `rotate(${-i * 45 - 22.5}deg)` }}
-                    >
-                      {seg.label}
-                    </span>
-                  </div>
-                ))}
-
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <SpinButton onClick={spinWheel} disabled={isSpinning} label={spinButtonText} />
-                </div>
-              </div>
-            </div>
+            <Wheel
+              segments={segments}
+              pointerColor={pointerColor}
+              spinButtonText={spinButtonText}
+              wheelRotationDeg={wheelRotationDeg}
+              isSpinning={isSpinning}
+              onSpin={spinWheel}
+            />
           </div>
         </div>
 
         {/* Reserve vertical space so the wheel doesn't shift when result appears */}
         <div className="mt-4 sm:mt-6 md:mt-7 flex justify-center min-h-[170px] sm:min-h-[190px] md:min-h-[220px]">
           {selectedSlice && (
-            <div
-              className="w-full max-w-sm rounded-[18px] overflow-hidden"
-            >
-              <div
-                className="rounded-[18px] px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 text-center"
-                style={{
-                  background: 'linear-gradient(135deg, #1a0533 0%, #0d0d2b 100%)',
-                }}
-              >
-                <div
-                  className="text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase mb-1"
-                  style={{
-                    background: 'linear-gradient(90deg, #FFD700, #FF6A00, #FFD700)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  🏆 Congratulations!
-                </div>
-                <div
-                  className="text-xl sm:text-2xl md:text-[26px] font-bold leading-snug"
-                  style={{
-                    background: 'linear-gradient(90deg, #FFD700 0%, #fff 50%, #FFD700 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  You won {selectedSlice.label} 🎉
-                </div>
-                {couponCode && (
-                  <div className="mt-2 text-[11px] sm:text-xs tracking-[0.22em] text-[#FFD700aa] font-mono">
-                    Code: {couponCode}
-                  </div>
-                )}
-              </div>
-            </div>
+            <ResultCard selectedSlice={selectedSlice} couponCode={couponCode} />
           )}
         </div>
       </div>
