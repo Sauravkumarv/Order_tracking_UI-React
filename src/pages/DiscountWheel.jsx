@@ -31,7 +31,12 @@ const computeSpinDelta = ({
 
 const PointerIcon = ({ color }) => (
   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" className="w-8 h-8 drop-shadow">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow"
+    >
       <path
         d="M16 30s10-9 10-17a10 10 0 1 0-20 0c0 8 10 17 10 17Z"
         fill={color}
@@ -47,7 +52,7 @@ const SpinButton = ({ onClick, disabled, label }) => (
   <button
     onClick={onClick}
     disabled={disabled}
-    className="relative w-16 h-16 md:w-18 md:h-18 rounded-full text-lg md:text-xl font-extrabold text-white shadow-2xl border-4 border-amber-200 transition-all duration-150 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+    className="relative w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full text-base sm:text-lg md:text-xl font-extrabold text-white shadow-2xl border-4 border-amber-200 transition-all duration-150 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
     style={{
       background: 'radial-gradient(circle at 30% 30%, #ffe8a3, #f2a600 55%, #c77700 100%)',
       boxShadow:
@@ -118,18 +123,24 @@ const DiscountWheel = () => {
   }, [segments, wheelRotationDeg, isSpinning]);
 
   return (
-    <div className="min-h-screen flex flex-col mt-0 mb-10 items-center justify-center px-3 py-8 md:px-4 md:py-10 bg-[var(--color-white,#ffffff)]">
-      <div className="text-center mb-6">
+    <div className="min-h-screen flex flex-col mt-0 mb-10 items-center justify-start px-3 py-8 md:px-4 md:py-10 bg-[var(--color-white,#ffffff)]">
+      <div className="text-center mb-2 sm:mb-4">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 drop-shadow-sm">Lucky Spin Wheel</h1>
         <p className="text-sm md:text-lg text-slate-600 mt-1">Spin to win amazing discounts</p>
       </div>
 
       <div className="w-full max-w-xl">
-        <div className="relative mx-auto rounded-3xl bg-white/90 backdrop-blur-md border border-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.12)] px-4 py-6 md:px-6 md:py-8">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-white pointer-events-none"></div>
+        <div className="relative mx-auto rounded-3xl bg-white/85 backdrop-blur-md border border-white/70 shadow-[0_18px_45px_rgba(0,0,0,0.10)] px-4 py-4 sm:px-5 sm:py-7 md:px-6 md:py-8">
+          <div className="absolute inset-0 rounded-3xl bg-white/45 pointer-events-none"></div>
 
           <div className="relative flex flex-col items-center">
-            <div className="relative w-64 h-64 md:w-80 md:h-80">
+            <div
+              className="relative"
+              style={{
+                width: 'clamp(240px, 76vw, 360px)',
+                height: 'clamp(240px, 76vw, 360px)',
+              }}
+            >
               <div className="absolute inset-0 rounded-full bg-amber-200/50 blur-3xl opacity-60"></div>
 
               <PointerIcon color={pointerColor} />
@@ -143,14 +154,14 @@ const DiscountWheel = () => {
                 {segments.map((seg, i) => (
                   <div
                     key={i}
-                    className="absolute inset-3 md:inset-4 flex items-center justify-center text-white font-semibold text-xs md:text-base drop-shadow-lg"
+                    className="absolute inset-2 sm:inset-3 md:inset-4 flex items-center justify-center text-white font-semibold text-[10px] sm:text-xs md:text-base drop-shadow-lg"
                     style={{
                       transform: `rotate(${i * 45 + 22.5}deg) translateY(-38%)`,
                       transformOrigin: 'center',
                     }}
                   >
                     <span
-                      className="px-2 py-1 rounded-full bg-black/35"
+                      className="px-2 py-1 rounded-full bg-black/35 max-w-[82%] truncate"
                       style={{ transform: `rotate(${-i * 45 - 22.5}deg)` }}
                     >
                       {seg.label}
@@ -166,50 +177,47 @@ const DiscountWheel = () => {
           </div>
         </div>
 
-        {selectedSlice && (
-          <div className="mt-6 md:mt-8 flex justify-center">
-    <div style={{
-      background: 'linear-gradient(135deg, #FF6A00 0%, #FFD700 40%, #FF0080 100%)',
-      borderRadius: '20px',
-      padding: '2px',
-      animation: 'pulse-glow 2s ease-in-out infinite',
-    }}>
-      <div style={{
-        background: 'linear-gradient(135deg, #1a0533 0%, #0d0d2b 100%)',
-        borderRadius: '18px',
-        padding: '20px 36px',
-        textAlign: 'center',
-      }}>
-        <div style={{
-          fontSize: '13px',
-          fontWeight: 500,
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          background: 'linear-gradient(90deg, #FFD700, #FF6A00, #FFD700)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          marginBottom: '6px',
-        }}>
-          🏆 Congratulations!
+        {/* Reserve vertical space so the wheel doesn't shift when result appears */}
+        <div className="mt-4 sm:mt-6 md:mt-7 flex justify-center min-h-[170px] sm:min-h-[190px] md:min-h-[220px]">
+          {selectedSlice && (
+            <div
+              className="w-full max-w-sm rounded-[18px] overflow-hidden"
+            >
+              <div
+                className="rounded-[18px] px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 text-center"
+                style={{
+                  background: 'linear-gradient(135deg, #1a0533 0%, #0d0d2b 100%)',
+                }}
+              >
+                <div
+                  className="text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase mb-1"
+                  style={{
+                    background: 'linear-gradient(90deg, #FFD700, #FF6A00, #FFD700)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  🏆 Congratulations!
+                </div>
+                <div
+                  className="text-xl sm:text-2xl md:text-[26px] font-bold leading-snug"
+                  style={{
+                    background: 'linear-gradient(90deg, #FFD700 0%, #fff 50%, #FFD700 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  You won {selectedSlice.label} 🎉
+                </div>
+                {couponCode && (
+                  <div className="mt-2 text-[11px] sm:text-xs tracking-[0.22em] text-[#FFD700aa] font-mono">
+                    Code: {couponCode}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-        <div style={{
-          fontSize: '26px',
-          fontWeight: 700,
-          background: 'linear-gradient(90deg, #FFD700 0%, #fff 50%, #FFD700 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}>
-          You won {selectedSlice.label} 🎉
-        </div>
-        {couponCode && (
-          <div style={{ marginTop: '10px', fontSize: '13px', letterSpacing: '2px', color: '#FFD700aa', fontFamily: 'monospace' }}>
-            Code: {couponCode}
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-)}
       </div>
 
       {selectedSlice && !isSpinning && (
