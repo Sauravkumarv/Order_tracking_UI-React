@@ -1,4 +1,4 @@
-import { stats } from "../config/stats.config"
+// import { stats } from "../config/stats.config"
 
 const Dashboard = () => (
   // <div className="space-y-8">
