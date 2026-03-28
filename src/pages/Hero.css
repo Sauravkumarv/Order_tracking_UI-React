@@ -677,6 +677,7 @@
   .hprog {
     bottom: 18px;
     gap: 10px;
+    justify-content: center;
   }
 
   .prog-barwrap {
