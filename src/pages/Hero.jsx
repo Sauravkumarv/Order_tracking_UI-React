@@ -6,15 +6,13 @@ import { heroSlides as slides } from "../config/hero.config";
 const SLIDE_DURATION = 6000;
 
 export default function HeroSection() {
-  const [active, setActive]           = useState(0);
-  const [prev, setPrev]               = useState(null);
+  const [active, setActive] = useState(0);
+  const [prev, setPrev] = useState(null);
   const [transitioning, setTransitioning] = useState(false);
-  const [visible, setVisible]         = useState(false);
-  const [mousePos, setMousePos]       = useState({ x: 0.5, y: 0.5 });
-  const [progress, setProgress]       = useState(0);
-  const [menuOpen, setMenuOpen]       = useState(false);
-  const heroRef    = useRef(null);
-  const timerRef   = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+  const [progress, setProgress] = useState(0);
+  const heroRef = useRef(null);
+  const timerRef = useRef(null);
   const progressRef = useRef(null);
 
   const startAutoplay = useCallback(() => {
@@ -52,7 +50,6 @@ export default function HeroSection() {
   }, [active, transitioning, startAutoplay]);
 
   useEffect(() => {
-    setTimeout(() => setVisible(true), 80);
     const timer = setTimeout(() => { startAutoplay(); }, 100);
     return () => {
       clearTimeout(timer);
@@ -60,12 +57,6 @@ export default function HeroSection() {
       clearInterval(progressRef.current);
     };
   }, [startAutoplay]);
-
-  /* Disable body scroll when mobile menu is open */
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
 
   const handleMouseMove = (e) => {
     const r = heroRef.current?.getBoundingClientRect();
