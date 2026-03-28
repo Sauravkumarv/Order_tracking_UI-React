@@ -231,8 +231,8 @@
 /* PROGRESS PILLS */
 .hprog {
   position: absolute;
-  left: 50%;
-  bottom: 40px;
+  left: 35%;
+  bottom: 50px;
   transform: translateX(-50%);
   z-index: 20;
   display: flex;
@@ -472,6 +472,39 @@
 .hbooknow:hover {
   box-shadow: 0 0 36px rgba(200, 170, 110, .45);
   transform: translateY(-1px);
+}
+
+.back-button {
+  display: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: #fff;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 3px;
+  background: rgba(0,0,0,.25);
+  transition: background .25s, color .25s;
+}
+
+@media (max-width: 768px) {
+  .back-button {
+    display: inline-flex;
+  }
+}
+.back-button:hover {
+  background: rgba(255,255,255,.15);
+  color: #c8aa6e;
+}
+
+.back-icon {
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.92em;
 }
 
 /* ─── CONTENT WRAPPER ────────────────────────────────── */

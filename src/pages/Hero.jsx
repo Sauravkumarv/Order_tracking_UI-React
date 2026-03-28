@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { ArrowLeft } from "lucide-react";
 import "./Hero.css";
 import { heroSlides as slides } from "../config/hero.config";
 
@@ -82,14 +83,7 @@ export default function HeroSection() {
       onMouseMove={handleMouseMove}
       style={{ position: "relative", height: "100svh", minHeight: 560, overflow: "hidden", background: "#04101f" }}
     >
-      {/* DECO */}
-      <div className="deco-grid" />
-      {[560, 360, 160].map((s, i) => (
-        <div key={i} className="deco-ring" style={{
-          width: s, height: s, right: -s * .18, top: "50%", transform: "translateY(-50%)"
-        }} />
-      ))}
-
+      
       {/* BG SLIDES */}
       {slides.map((s, i) => (
         <div
@@ -125,10 +119,13 @@ export default function HeroSection() {
         </ul>
 
         {/* Desktop CTA */}
-        <button className="hbooknow">Book Now</button>
+        <a href="/" className="hbooknow">Book Now</a>
 
         {/* Hamburger — visible on tablet/mobile only via CSS */}
-        <button
+        <a className="back-button" href="/" aria-label="Back to home">
+          <ArrowLeft className="back-icon" size={16} /> Back
+        </a>
+        {/* <button
           className="hnav-burger"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
@@ -137,22 +134,10 @@ export default function HeroSection() {
           <span className={`burger-bar${menuOpen ? " open" : ""}`} />
           <span className={`burger-bar${menuOpen ? " open" : ""}`} />
           <span className={`burger-bar${menuOpen ? " open" : ""}`} />
-        </button>
+        </button> */}
       </nav>
 
-      {/* Mobile drawer */}
-      {menuOpen && (
-        <div className="hnav-drawer" onClick={() => setMenuOpen(false)}>
-          <div className="hnav-drawer-inner" onClick={(e) => e.stopPropagation()}>
-            <ul className="drawer-links">
-              {["Destinations", "Cruises", "Experiences", "About"].map((l) => (
-                <li key={l}><a href="#" onClick={() => setMenuOpen(false)}>{l}</a></li>
-              ))}
-            </ul>
-            <button className="hbooknow drawer-cta">Book Now</button>
-          </div>
-        </div>
-      )}
+      
 
       {/* ── CONTENT ── */}
       <div className="hcontent" key={`c-${active}`}>
