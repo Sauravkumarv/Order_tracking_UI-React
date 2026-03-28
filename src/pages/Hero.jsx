@@ -1,40 +1,19 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import "./Hero.css";
-
-const slides = [
-  {
-    bg: "https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=1920&q=90",
-    tag: "PREMIUM CRUISE EXPERIENCE",
-    heading: ["India's First", "Verified Cruise", "Booking Platform"],
-    sub: "Explore the world's finest cruise lines with trusted, verified bookings — tailored for Indian travellers.",
-  },
-  {
-    bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=90",
-    tag: "LUXURY AT SEA",
-    heading: ["Sail Into", "Extraordinary", "Destinations"],
-    sub: "From the Mediterranean to the Indian Ocean — your dream voyage begins here.",
-  },
-  {
-    bg: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=1920&q=90",
-    tag: "EXCLUSIVE DEALS",
-    heading: ["Best Prices,", "Guaranteed", "Everywhere"],
-    sub: "We partner with top cruise lines to bring you exclusive rates and unmatched value.",
-  },
-];
-
-
+import { heroSlides as slides } from "../config/hero.config";
 
 const SLIDE_DURATION = 6000;
 
 export default function HeroSection() {
-  const [active, setActive] = useState(0);
-  const [prev, setPrev] = useState(null);
+  const [active, setActive]           = useState(0);
+  const [prev, setPrev]               = useState(null);
   const [transitioning, setTransitioning] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
-  const [progress, setProgress] = useState(0);
-  const heroRef = useRef(null);
-  const timerRef = useRef(null);
+  const [visible, setVisible]         = useState(false);
+  const [mousePos, setMousePos]       = useState({ x: 0.5, y: 0.5 });
+  const [progress, setProgress]       = useState(0);
+  const [menuOpen, setMenuOpen]       = useState(false);
+  const heroRef    = useRef(null);
+  const timerRef   = useRef(null);
   const progressRef = useRef(null);
 
   const startAutoplay = useCallback(() => {
@@ -73,10 +52,7 @@ export default function HeroSection() {
 
   useEffect(() => {
     setTimeout(() => setVisible(true), 80);
-    // Start autoplay after component mounts
-    const timer = setTimeout(() => {
-      startAutoplay();
-    }, 100);
+    const timer = setTimeout(() => { startAutoplay(); }, 100);
     return () => {
       clearTimeout(timer);
       clearInterval(timerRef.current);
@@ -84,45 +60,101 @@ export default function HeroSection() {
     };
   }, [startAutoplay]);
 
+  /* Disable body scroll when mobile menu is open */
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   const handleMouseMove = (e) => {
     const r = heroRef.current?.getBoundingClientRect();
     if (!r) return;
     setMousePos({ x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height });
   };
 
-  const px = (mousePos.x - 0.5) * 20;
-  const py = (mousePos.y - 0.5) * 12;
+  const px    = (mousePos.x - 0.5) * 20;
+  const py    = (mousePos.y - 0.5) * 12;
   const slide = slides[active];
 
   return (
-    <div ref={heroRef} onMouseMove={handleMouseMove}
-      style={{ position: "relative", height: "100vh", minHeight: 640, overflow: "hidden", background: "#04101f" }}>
-
+    <div
+      ref={heroRef}
+      onMouseMove={handleMouseMove}
+      style={{ position: "relative", height: "100svh", minHeight: 560, overflow: "hidden", background: "#04101f" }}
+    >
       {/* DECO */}
       <div className="deco-grid" />
-      {[560,360,160].map((s,i) => (
+      {[560, 360, 160].map((s, i) => (
         <div key={i} className="deco-ring" style={{
-          width:s,height:s,right:-s*.18,top:"50%",transform:"translateY(-50%)"
+          width: s, height: s, right: -s * .18, top: "50%", transform: "translateY(-50%)"
         }} />
       ))}
 
       {/* BG SLIDES */}
       {slides.map((s, i) => (
-        <div key={i} className={`sbg${i===active?" sbg-active":i===prev?" sbg-out":" sbg-in"}`}
+        <div
+          key={i}
+          className={`sbg${i === active ? " sbg-active" : i === prev ? " sbg-out" : " sbg-in"}`}
           style={{
-            opacity: i===active ? 1 : i===prev ? 0 : 0,
-            zIndex: i===active ? 2 : i===prev ? 1 : 0,
+            opacity: i === active ? 1 : i === prev ? 0 : 0,
+            zIndex: i === active ? 2 : i === prev ? 1 : 0,
             transition: "opacity 1.1s cubic-bezier(.4,0,.2,1)",
-            "--px": i===active ? px : 0,
-            "--py": i===active ? py : 0,
-          }}>
+            "--px": i === active ? px : 0,
+            "--py": i === active ? py : 0,
+          }}
+        >
           <img src={s.bg} alt="" />
           <div className="sbg-overlay" />
           <div className="sbg-grain" />
           <div className="sbg-streak" />
         </div>
       ))}
-      {/* CONTENT — re-keyed to replay animations per slide */}
+
+      {/* ── NAVBAR ── */}
+      <nav className="hnav">
+        <a className="hlogo" href="#">
+          <span className="hlogo-main">LUMAVOYA</span>
+          <span className="hlogo-sub">Luxury Cruises</span>
+        </a>
+
+        {/* Desktop nav links */}
+        <ul className="hnavlinks">
+          {["Destinations", "Cruises", "Experiences", "About"].map((l) => (
+            <li key={l}><a href="#">{l}</a></li>
+          ))}
+        </ul>
+
+        {/* Desktop CTA */}
+        <button className="hbooknow">Book Now</button>
+
+        {/* Hamburger — visible on tablet/mobile only via CSS */}
+        <button
+          className="hnav-burger"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className={`burger-bar${menuOpen ? " open" : ""}`} />
+          <span className={`burger-bar${menuOpen ? " open" : ""}`} />
+          <span className={`burger-bar${menuOpen ? " open" : ""}`} />
+        </button>
+      </nav>
+
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="hnav-drawer" onClick={() => setMenuOpen(false)}>
+          <div className="hnav-drawer-inner" onClick={(e) => e.stopPropagation()}>
+            <ul className="drawer-links">
+              {["Destinations", "Cruises", "Experiences", "About"].map((l) => (
+                <li key={l}><a href="#" onClick={() => setMenuOpen(false)}>{l}</a></li>
+              ))}
+            </ul>
+            <button className="hbooknow drawer-cta">Book Now</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── CONTENT ── */}
       <div className="hcontent" key={`c-${active}`}>
         <div className="htag">
           <span className="htag-line" />
@@ -132,7 +164,7 @@ export default function HeroSection() {
         <div>
           {slide.heading.map((line, i) => (
             <div key={i} className="hheadwrap">
-              <span className={`hheadline${i===1?" gold":""}`}>{line}</span>
+              <span className={`hheadline${i === 1 ? " gold" : ""}`}>{line}</span>
             </div>
           ))}
         </div>
@@ -143,35 +175,24 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* SLIDE PROGRESS */}
+      {/* ── SLIDE PROGRESS ── */}
       <div className="hprog">
         {slides.map((s, i) => (
-          <div key={i} className={`prog-item${i===active?" prog-act":""}`} onClick={() => goTo(i)}>
+          <div
+            key={i}
+            className={`prog-item${i === active ? " prog-act" : ""}`}
+            onClick={() => goTo(i)}
+          >
             <div className="prog-barwrap">
-              <div className="prog-bar"
-                style={{width: i===active ? `${progress}%` : i<active ? "100%" : "0%"}} />
+              <div
+                className="prog-bar"
+                style={{ width: i === active ? `${progress}%` : i < active ? "100%" : "0%" }}
+              />
             </div>
-            <span className="prog-lbl">{s.tag.split(" ").slice(0,2).join(" ")}</span>
+            <span className="prog-lbl">{s.tag.split(" ").slice(0, 2).join(" ")}</span>
           </div>
         ))}
       </div>
-
-      {/* COUNTER */}
-      <div className="hcount">
-        <span className="hcount-cur">0{active+1}</span>
-        <span className="hcount-sep">/</span>
-        <span className="hcount-tot">0{slides.length}</span>
-      </div>
-
-      {/* SCROLL */}
-      <div className="hscroll">
-        <div className="hscroll-mouse">
-          <div className="hscroll-wheel" />
-        </div>
-        <span className="hscroll-txt">Scroll</span>
-      </div>
-
-
     </div>
   );
 }

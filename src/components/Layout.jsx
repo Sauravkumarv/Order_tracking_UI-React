@@ -4,15 +4,15 @@ import Sidebar from "./Sidebar"
 import { navItems } from "../config/nav.config"
 
 const HeroNavbar = () => (
-  <div className="fixed inset-x-0 top-0 z-40 transform bg-white border-b border-slate-200 shadow-lg transition-transform duration-500">
-    <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+  <div className="fixed inset-x-0 top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-md">
+    <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 sm:py-4 md:flex-row md:items-center md:justify-between lg:px-10">
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-base font-bold text-white shadow-lg">
           AI
         </div>
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Apparotech</p>
-          <p className="text-sm font-semibold text-slate-900">Hero mode</p>
+        <div className="leading-tight">
+          <p className="text-[11px] uppercase tracking-[0.26em] text-slate-500 sm:text-xs">Apparotech</p>
+          <p className="text-sm font-semibold text-slate-900 sm:text-base">Hero mode</p>
         </div>
       </div>
       <nav className="flex flex-wrap items-center gap-2">
@@ -20,7 +20,7 @@ const HeroNavbar = () => (
           <a
             key={item.to}
             href={item.to}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-indigo-600 hover:text-white"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-indigo-600 hover:text-white sm:text-sm"
           >
             {item.name}
           </a>
